@@ -43,27 +43,42 @@ function settings = initSettings()
 settings.msToProcess        = 37000;        %[ms]
 
 % Number of channels to be used for signal processing
-settings.numberOfChannels   = 8;
+settings.numberOfChannels   = 8;	% used 12 in updated code
 
 % Move the starting point of processing. Can be used to start the signal
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 0;
+settings.skipNumberOfBytes     = 1000000;
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
+
+settings.fileName = ...
+     'C:\Users\phahn\Data\park_fastgps';
+%     'C:\Users\phahn\Data\120s_sample.bin';
+%    'C:\Users\phahn\Data\RTLSDR\Feb6.bin';
+settings.dataType           = 'schar'; % they used schar instead of int8
+settings.fileType           = 1;
+settings.IF                 = 110.;      %[Hz]
+settings.samplingFreq       = 1999998.17;     %[Hz]
+
+%{
 settings.fileName           = ...
    'C:\Users\phahn\Data\GNSS_signal_records\GPS_and_GIOVE_A-NN-fs16_3676-if4_1304.bin';
 % Data type used to store one sample
-settings.dataType           = 'int8';
-
-% Intermediate, sampling and code frequencies
+%settings.dataType           = 'uchar';
+settings.dataType           = 'int8'; % they used schar instead of int8
+settings.fileType           = 1;
 settings.IF                 = 4.1304e6;      %[Hz]
 settings.samplingFreq       = 16.3676e6;     %[Hz]
-%settings.IF                 = 110.;      %[Hz]
-%settings.samplingFreq       = 1999998.17;     %[Hz]
+%}
+
+% File Types
+%1 - 8 bit real samples S0,S1,S2,...
+%2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
+
 settings.codeFreqBasis      = 1.023e6;      %[Hz]
 
 % Define number of chips in a code period

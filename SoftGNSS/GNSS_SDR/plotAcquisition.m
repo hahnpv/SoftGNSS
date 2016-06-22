@@ -51,7 +51,7 @@ set   (hAxes, 'YGrid', 'on');
 
 %% Mark acquired signals ==================================================
 
-acquiredSignals = acqResults.peakMetric .* (acqResults.carrFreq > 0);
+acquiredSignals = acqResults.peakMetric .* (acqResults.carrFreq ~= 0);
 
 hold(hAxes, 'on');
 bar (hAxes, acquiredSignals, 'FaceColor', [0 0.8 0]);

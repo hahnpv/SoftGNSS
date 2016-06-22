@@ -54,7 +54,7 @@ samplesPerCode = round(settings.samplingFreq / ...
 signal1 = longSignal(1 : samplesPerCode);
 signal2 = longSignal(samplesPerCode+1 : 2*samplesPerCode);
 
-signal0DC = longSignal - mean(longSignal); 
+signal0DC = longSignal - mean(longSignal);   %%Problems here....
 
 % Find sampling period
 ts = 1 / settings.samplingFreq;
@@ -103,14 +103,13 @@ for PRN = settings.acqSatelliteList
                                0.5e3 * (frqBinIndex - 1);
 
         %--- Generate local sine and cosine -------------------------------
-        sinCarr = sin(frqBins(frqBinIndex) * phasePoints);
-        cosCarr = cos(frqBins(frqBinIndex) * phasePoints);
-
+        sigCarr = exp(i*frqBins(frqBinIndex) * phasePoints);
+        
         %--- "Remove carrier" from the signal -----------------------------
-        I1      = sinCarr .* signal1;
-        Q1      = cosCarr .* signal1;
-        I2      = sinCarr .* signal2;
-        Q2      = cosCarr .* signal2;
+        I1      = real(sigCarr .* signal1);
+        Q1      = imag(sigCarr .* signal1);
+        I2      = real(sigCarr .* signal2);
+        Q2      = imag(sigCarr .* signal2);
 
         %--- Convert the baseband signal to frequency domain --------------
         IQfreqDom1 = fft(I1 + j*Q1);
@@ -192,6 +191,9 @@ for PRN = settings.acqSatelliteList
             signal0DC(codePhase:(codePhase + 10*samplesPerCode-1)) ...
             .* longCaCode;
         
+        %--- Compute the magnitude of the FFT, find maximum and the
+        %associated carrier frequency
+        
         %--- Find the next highest power of two and increase by 8x --------
         fftNumPts = 8*(2^(nextpow2(length(xCarrier))));
         
@@ -199,13 +201,24 @@ for PRN = settings.acqSatelliteList
         %associated carrier frequency 
         fftxc = abs(fft(xCarrier, fftNumPts)); 
         
+        
         uniqFftPts = ceil((fftNumPts + 1) / 2);
-        [fftMax, fftMaxIndex] = max(fftxc(5 : uniqFftPts-5));
-        
+        [fftMax, fftMaxIndex] = max(fftxc);
         fftFreqBins = (0 : uniqFftPts-1) * settings.samplingFreq/fftNumPts;
+        if (fftMaxIndex > uniqFftPts) %and should validate using complex data
+            if (rem(fftNumPts,2)==0)  %even number of points, so DC and Fs/2 computed
+                fftFreqBinsRev=-fftFreqBins((uniqFftPts-1):-1:2);
+                [fftMax, fftMaxIndex] = max(fftxc((uniqFftPts+1):length(fftxc)));
+                acqResults.carrFreq(PRN)  = -fftFreqBinsRev(fftMaxIndex);
+            else  %odd points so only DC is not included
+                fftFreqBinsRev=-fftFreqBins((uniqFftPts):-1:2);
+                [fftMax, fftMaxIndex] = max(fftxc((uniqFftPts+1):length(fftxc)));
+                acqResults.carrFreq(PRN)  = fftFreqBinsRev(fftMaxIndex);
+            end
+        else
+            acqResults.carrFreq(PRN)  = (-1)^(settings.fileType-1)*fftFreqBins(fftMaxIndex);
+        end
         
-        %--- Save properties of the detected satellite signal -------------
-        acqResults.carrFreq(PRN)  = fftFreqBins(fftMaxIndex);
         acqResults.codePhase(PRN) = codePhase;
     
     else

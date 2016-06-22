@@ -59,13 +59,20 @@ disp ('Starting processing...');
 
 [fid, message] = fopen(settings.fileName, 'rb');
 
+%Initialize the multiplier to adjust for the data type
+if (settings.fileType==1) 
+    dataAdaptCoeff=1;
+else
+    dataAdaptCoeff=2;
+end
+
 %If success, then process the data
 if (fid > 0)
     
     % Move the starting point of processing. Can be used to start the
     % signal processing at any point in the data record (e.g. good for long
     % records or for signal processing in blocks).
-    fseek(fid, settings.skipNumberOfBytes, 'bof');
+    fseek(fid, dataAdaptCoeff*settings.skipNumberOfBytes, 'bof'); 
 
 %% Acquisition ============================================================
 
@@ -79,7 +86,15 @@ if (fid > 0)
         
         % Read data for acquisition. 11ms of signal are needed for the fine
         % frequency estimation
-        data = fread(fid, 11*samplesPerCode, settings.dataType)';
+        
+        data = fread(fid, dataAdaptCoeff*11*samplesPerCode, settings.dataType)';
+        %data = double(bitshift(int8(data),4)); % PHAHN testing...
+        
+        if (dataAdaptCoeff==2)    
+            data1=data(1:2:end);    
+            data2=data(2:2:end);    
+            data=data1 + i .* data2;    
+        end
 
         %--- Do the acquisition -------------------------------------------
         disp ('   Acquiring satellites...');

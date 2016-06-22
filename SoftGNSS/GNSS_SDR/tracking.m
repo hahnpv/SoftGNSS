@@ -101,6 +101,12 @@ PDIcarr = 0.001;
                                     0.25);
 hwb = waitbar(0,'Tracking...');
 
+if (settings.fileType==1)
+    dataAdaptCoeff=1;
+else
+    dataAdaptCoeff=2;
+end
+
 %% Start processing channels ==============================================
 for channelNr = 1:settings.numberOfChannels
     
@@ -114,9 +120,9 @@ for channelNr = 1:settings.numberOfChannels
         % records). In addition skip through that data file to start at the
         % appropriate sample (corresponding to code phase). Assumes sample
         % type is schar (or 1 byte per sample) 
-        fseek(fid, ...
-              settings.skipNumberOfBytes + channel(channelNr).codePhase-1, ...
-              'bof');
+          fseek(fid, ...
+            dataAdaptCoeff*(settings.skipNumberOfBytes + channel(channelNr).codePhase-1), ...
+            'bof');
 
 
         % Get a vector with the C/A code sampled 1x/chip
@@ -180,12 +186,20 @@ for channelNr = 1:settings.numberOfChannels
             % Read in the appropriate number of samples to process this
             % interation 
             [rawSignal, samplesRead] = fread(fid, ...
-                                             blksize, settings.dataType);
-            rawSignal = rawSignal';  %transpose vector
+                dataAdaptCoeff*blksize, settings.dataType);
+ 
+            rawSignal = rawSignal';
+
+            if (dataAdaptCoeff==2)
+                rawSignal1=rawSignal(1:2:end);
+                rawSignal2=rawSignal(2:2:end);
+                rawSignal = rawSignal1 + i .* rawSignal2;  %transpose vector
+            end
+            
             
             % If did not read in enough samples, then could be out of 
             % data - better exit 
-            if (samplesRead ~= blksize)
+            if (samplesRead ~= dataAdaptCoeff*blksize)
                 disp('Not able to read the specified number of samples  for tracking, exiting!')
                 fclose(fid);
                 return
@@ -222,14 +236,14 @@ for channelNr = 1:settings.numberOfChannels
             trigarg = ((carrFreq * 2.0 * pi) .* time) + remCarrPhase;
             remCarrPhase = rem(trigarg(blksize+1), (2 * pi));
             
-            % Finally compute the signal to mix the collected data to bandband
-            carrCos = cos(trigarg(1:blksize));
-            carrSin = sin(trigarg(1:blksize));
+            % Finally compute the signal to mix the collected data to
+            % bandband
+            carrsig = exp(i .* trigarg(1:blksize));
 
 %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband
-            qBasebandSignal = carrCos .* rawSignal;
-            iBasebandSignal = carrSin .* rawSignal;
+            qBasebandSignal = real(carrsig .* rawSignal);
+            iBasebandSignal = imag(carrsig .* rawSignal);
 
             % Now get early, late, and prompt values for each
             I_E = sum(earlyCode  .* iBasebandSignal);
@@ -272,7 +286,7 @@ for channelNr = 1:settings.numberOfChannels
 
 %% Record various measures to show in postprocessing ----------------------
             % Record sample number (based on 8bit samples)
-            trackResults(channelNr).absoluteSample(loopCnt) = ftell(fid);
+           trackResults(channelNr).absoluteSample(loopCnt) =(ftell(fid))/dataAdaptCoeff;
 
             trackResults(channelNr).dllDiscr(loopCnt)       = codeError;
             trackResults(channelNr).dllDiscrFilt(loopCnt)   = codeNco;
