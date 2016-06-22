@@ -56,9 +56,8 @@ settings = initSettings();
 try
     fprintf('Probing data (%s)...\n', settings.fileName)
     probeData(settings);
-catch
+catch errStruct
     % There was an error, print it and exit
-    errStruct = lasterror;
     disp(errStruct.message);
     disp('  (run setSettings or change settings in "initSettings.m" to reconfigure)')    
     return;

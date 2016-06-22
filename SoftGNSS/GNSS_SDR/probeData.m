@@ -101,7 +101,7 @@ if (fid > 0)
         xlabel('Time (ms)'); ylabel('Amplitude');
     else
 
-        data=data(1:2:end) + i .* data(2:2:end);
+        data=data(1:2:end) + 1i .* data(2:2:end);
         subplot(3, 2, 4);
         plot(1000 * timeScale(1:round(samplesPerCode/50)), ...
             real(data(1:round(samplesPerCode/50))));

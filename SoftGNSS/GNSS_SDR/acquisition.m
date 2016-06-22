@@ -103,7 +103,7 @@ for PRN = settings.acqSatelliteList
                                0.5e3 * (frqBinIndex - 1);
 
         %--- Generate local sine and cosine -------------------------------
-        sigCarr = exp(i*frqBins(frqBinIndex) * phasePoints);
+        sigCarr = exp(1i*frqBins(frqBinIndex) * phasePoints);
         
         %--- "Remove carrier" from the signal -----------------------------
         I1      = real(sigCarr .* signal1);
@@ -112,8 +112,8 @@ for PRN = settings.acqSatelliteList
         Q2      = imag(sigCarr .* signal2);
 
         %--- Convert the baseband signal to frequency domain --------------
-        IQfreqDom1 = fft(I1 + j*Q1);
-        IQfreqDom2 = fft(I2 + j*Q2);
+        IQfreqDom1 = fft(I1 + 1j*Q1);
+        IQfreqDom2 = fft(I2 + 1j*Q2);
 
         %--- Multiplication in the frequency domain (correlation in time
         %domain)
@@ -139,10 +139,10 @@ for PRN = settings.acqSatelliteList
     % The second peak is chosen not closer than 1 chip to the highest peak
     
     %--- Find the correlation peak and the carrier frequency --------------
-    [peakSize frequencyBinIndex] = max(max(results, [], 2));
+    [peakSize, frequencyBinIndex] = max(max(results, [], 2));
 
     %--- Find code phase of the same correlation peak ---------------------
-    [peakSize codePhase] = max(max(results));
+    [peakSize, codePhase] = max(max(results));
 
     %--- Find 1 chip wide C/A code phase exclude range around the peak ----
     samplesPerCodeChip   = round(settings.samplingFreq / settings.codeFreqBasis);

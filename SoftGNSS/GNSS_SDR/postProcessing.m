@@ -93,7 +93,7 @@ if (fid > 0)
         if (dataAdaptCoeff==2)    
             data1=data(1:2:end);    
             data2=data(2:2:end);    
-            data=data1 + i .* data2;    
+            data=data1 + 1i .* data2;    
         end
 
         %--- Do the acquisition -------------------------------------------

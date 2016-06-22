@@ -120,6 +120,19 @@ for channelNr = 1:settings.numberOfChannels
         % records). In addition skip through that data file to start at the
         % appropriate sample (corresponding to code phase). Assumes sample
         % type is schar (or 1 byte per sample) 
+        % TODO PHAHN this assumption is likely why CTTC doesn't work
+        % TODO PHAHN adding "2*" to this gets a CTTC fix which is close but
+        % off by ~ 1 degree in lat and lon, and alt drifts. But closer!
+        % TODO PHAHN this doesn't fix schar I/Q soln.
+        %{
+            % proposed naive soln. See if theres a way to get 
+        coeff = 1;
+        if strcmp(settings.dataType,'short'
+            coeff = 2;
+        end
+            then mult coeff below.
+            may be problems in other places too.
+        %}
           fseek(fid, ...
             dataAdaptCoeff*(settings.skipNumberOfBytes + channel(channelNr).codePhase-1), ...
             'bof');
@@ -190,21 +203,19 @@ for channelNr = 1:settings.numberOfChannels
  
             rawSignal = rawSignal';
 
-            if (dataAdaptCoeff==2)
-                rawSignal1=rawSignal(1:2:end);
-                rawSignal2=rawSignal(2:2:end);
-                rawSignal = rawSignal1 + i .* rawSignal2;  %transpose vector
-            end
-            
-            
             % If did not read in enough samples, then could be out of 
             % data - better exit 
             if (samplesRead ~= dataAdaptCoeff*blksize)
                 disp('Not able to read the specified number of samples  for tracking, exiting!')
-                fclose(fid);
                 return
             end
 
+            if (dataAdaptCoeff==2)
+                rawSignal1=rawSignal(1:2:end);
+                rawSignal2=rawSignal(2:2:end);
+                rawSignal = rawSignal1 + 1i .* rawSignal2;  %transpose vector
+            end
+          
 %% Set up all the code phase tracking information -------------------------
             % Define index into early code vector
             tcode       = (remCodePhase-earlyLateSpc) : ...
@@ -238,7 +249,7 @@ for channelNr = 1:settings.numberOfChannels
             
             % Finally compute the signal to mix the collected data to
             % bandband
-            carrsig = exp(i .* trigarg(1:blksize));
+            carrsig = exp(1i .* trigarg(1:blksize));
 
 %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband
