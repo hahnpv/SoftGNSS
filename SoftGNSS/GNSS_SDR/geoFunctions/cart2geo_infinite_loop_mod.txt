@@ -1,0 +1,17 @@
+Software falls into infinite loop after tracking, when 4 channels are selected
+The problem occurs in one of the functions for coordinate transformations – the cart2geo.m. The function fails to approximate the height precise enough. The quick fix is to modify the function cart2geo.m as shown here (starting at line 30):
+
+h = 0.1; oldh = 0;
+iterations = 0;
+while abs(h-oldh) > 1.e-12
+   oldh = h;
+   N = c/sqrt(1+ex2*cos(phi)^2);
+   phi = atan(Z/((sqrt(X^2+Y^2)*(1-(2-f(i))*f(i)*N/(N+h)))));
+   h = sqrt(X^2+Y^2)/cos(phi)-N;
+
+   iterations = iterations + 1;
+   if iterations > 100
+       fprintf('Failed to approximate h with desired precision. h-oldh: %e.\n', h-oldh);
+       break;
+   end
+end

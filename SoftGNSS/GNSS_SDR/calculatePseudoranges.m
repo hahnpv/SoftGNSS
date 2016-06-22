@@ -57,8 +57,7 @@ samplesPerCode = round(settings.samplingFreq / ...
                         (settings.codeFreqBasis / settings.codeLength));
 
 %--- For all channels in the list ... 
-for channelNr = 1:channelList
-
+for channelNr = 1:numel(channelList) % PHAHN was 1:channelList
     %--- Compute the travel times -----------------------------------------    
     travelTime(channelNr) = ...
         trackResults(channelNr).absoluteSample(msOfTheSignal(channelNr)) / samplesPerCode;

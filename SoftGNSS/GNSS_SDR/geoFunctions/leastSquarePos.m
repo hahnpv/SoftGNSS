@@ -99,8 +99,7 @@ end % for iter = 1:nmbOfIterations
 pos = pos';
 
 %=== Calculate Dilution Of Precision ======================================
-% if nargout  == 4          phahn commented out i think nargout change
-% biting us here
+if nargout  == 4
     %--- Initialize output ------------------------------------------------
     dop     = zeros(1, 5);
     
@@ -112,4 +111,4 @@ pos = pos';
     dop(3)  = sqrt(Q(1,1) + Q(2,2));                % HDOP
     dop(4)  = sqrt(Q(3,3));                         % VDOP
     dop(5)  = sqrt(Q(4,4));                         % TDOP
-% end
+end

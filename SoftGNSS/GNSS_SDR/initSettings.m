@@ -55,15 +55,15 @@ settings.skipNumberOfBytes     = 0;
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
 settings.fileName           = ...
-   'C:\Users\phahn\Data\gps_data_4_16_16.bin';
+   'C:\Users\phahn\Data\GNSS_signal_records\GPS_and_GIOVE_A-NN-fs16_3676-if4_1304.bin';
 % Data type used to store one sample
 settings.dataType           = 'int8';
 
 % Intermediate, sampling and code frequencies
-%settings.IF                 = 9.548e6;      %[Hz]
-%settings.samplingFreq       = 38.192e6;     %[Hz]
-settings.IF                 = 110.;      %[Hz]
-settings.samplingFreq       = 1999998.17;     %[Hz]
+settings.IF                 = 4.1304e6;      %[Hz]
+settings.samplingFreq       = 16.3676e6;     %[Hz]
+%settings.IF                 = 110.;      %[Hz]
+%settings.samplingFreq       = 1999998.17;     %[Hz]
 settings.codeFreqBasis      = 1.023e6;      %[Hz]
 
 % Define number of chips in a code period
