@@ -99,7 +99,7 @@ for channelNr = activeChnList
         
         index2 = index - index(i);
 
-        if (~isempty(find(index2 == 6000)))
+        if (~isempty(find(index2 == 6000, 1)))
 
             %=== Re-read bit vales for preamble verification ==============
             % Preamble occurrence is verified by checking the parity of

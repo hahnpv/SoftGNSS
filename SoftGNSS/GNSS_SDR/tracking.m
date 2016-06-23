@@ -118,26 +118,12 @@ for channelNr = 1:settings.numberOfChannels
         % Move the starting point of processing. Can be used to start the
         % signal processing at any point in the data record (e.g. for long
         % records). In addition skip through that data file to start at the
-        % appropriate sample (corresponding to code phase). Assumes sample
-        % type is schar (or 1 byte per sample) 
-        % TODO PHAHN this assumption is likely why CTTC doesn't work
-        % TODO PHAHN adding "2*" to this gets a CTTC fix which is close but
-        % off by ~ 1 degree in lat and lon, and alt drifts. But closer!
-        % TODO PHAHN this doesn't fix schar I/Q soln.
-        %{
-            % proposed naive soln. See if theres a way to get 
-        coeff = 1;
-        if strcmp(settings.dataType,'short'
-            coeff = 2;
-        end
-            then mult coeff below.
-            may be problems in other places too.
-        %}
+        % appropriate sample (corresponding to code phase) using dataSize
           fseek(fid, ...
-            dataAdaptCoeff*(settings.skipNumberOfBytes + channel(channelNr).codePhase-1), ...
+            settings.dataSize*dataAdaptCoeff*(settings.skipNumberOfBytes + channel(channelNr).codePhase-1), ...
             'bof');
 
-
+        % TODO you can cache this as it only relies on PRN which is known.
         % Get a vector with the C/A code sampled 1x/chip
         caCode = generateCAcode(channel(channelNr).PRN);
         % Then make it possible to do early and late versions
@@ -170,7 +156,7 @@ for channelNr = 1:settings.numberOfChannels
             % The GUI is updated every 50ms. This way Matlab GUI is still
             % responsive enough. At the same time Matlab is not occupied
             % all the time with GUI task.
-            if (rem(loopCnt, 50) == 0)
+            if (rem(loopCnt, 1000) == 0)
                 try
                     waitbar(loopCnt/codePeriods, ...
                             hwb, ...

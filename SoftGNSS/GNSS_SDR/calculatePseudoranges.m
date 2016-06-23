@@ -57,13 +57,17 @@ samplesPerCode = round(settings.samplingFreq / ...
                         (settings.codeFreqBasis / settings.codeLength));
 
 %--- For all channels in the list ... 
-for channelNr = 1:numel(channelList) % PHAHN was 1:channelList
+for channelNr = 1:numel(channelList) % numel required becase sometime row, sometimes column
     %--- Compute the travel times -----------------------------------------    
     travelTime(channelNr) = ...
         trackResults(channelNr).absoluteSample(msOfTheSignal(channelNr)) / samplesPerCode;
 end
 
 %--- Truncate the travelTime and compute pseudoranges ---------------------
+% http://www.insidegnss.com/node/2898
+% This procedure yields relative arrival times between satellites, but not the absolute pseudoranges. To determine the set of pseudoranges for the first time, the channel with the earliest arriving subframe is assumed as reference and a minimum travel time is assigned to the reference channel based on the known orbits of the satellites and typical user altitudes (e.g., its value, for GPS, is in a range between 65 and 85 milliseconds).
+% All other pseudoranges are then derived with respect to the reference channel by adding the relative-arrival times.
+% TODO: is the settings offset updated once we know the closest satellite true range? or are we always carrying error in diff between settings.startOffset and truth?
 minimum         = floor(min(travelTime));
 travelTime      = travelTime - minimum + settings.startOffset;
 

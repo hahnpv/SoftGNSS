@@ -88,8 +88,7 @@ if (fid > 0)
         % frequency estimation
         
         data = fread(fid, dataAdaptCoeff*11*samplesPerCode, settings.dataType)';
-        %data = double(bitshift(int8(data),4)); % PHAHN testing...
-        
+                
         if (dataAdaptCoeff==2)    
             data1=data(1:2:end);    
             data2=data(2:2:end);    
@@ -139,13 +138,12 @@ if (fid > 0)
 %% Calculate navigation solutions =========================================
     disp('   Calculating navigation solutions...');
     navSolutions = postNavigation(trackResults, settings);
-
     disp('   Processing is complete for this data block');
 
 %% Plot all results ===================================================
     disp ('   Ploting results...');
     if settings.plotTracking
-        plotTracking(1:settings.numberOfChannels, trackResults, settings);
+        plotTracking(strfind([trackResults.status],'T'), trackResults, settings);
     end
 
     plotNavigation(navSolutions, settings);
