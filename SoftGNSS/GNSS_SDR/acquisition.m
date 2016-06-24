@@ -62,8 +62,8 @@ ts = 1 / settings.samplingFreq;
 % Find phase points of the local carrier wave 
 phasePoints = (0 : (samplesPerCode-1)) * 2 * pi * ts;
 
-% Number of the frequency bins for the given acquisition band (500Hz steps)
-numberOfFrqBins = round(settings.acqSearchBand * 2) + 1;
+% Number of the frequency bins for the given acquisition band
+numberOfFrqBins = round( (settings.acqSearchBand*1000) / settings.acqSearchBin) + 1;
 
 % Generate all C/A codes and sample them according to the sampling freq.
 caCodesTable = makeCaTable(settings);

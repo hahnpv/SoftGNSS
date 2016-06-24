@@ -57,7 +57,7 @@ channel = repmat(channel, 1, settings.numberOfChannels);
 %% Copy acquisition results ===============================================
 
 %--- Sort peaks to find strongest signals, keep the peak index information
-[junk, PRNindexes]          = sort(acqResults.peakMetric, 2, 'descend');
+[~, PRNindexes]             = sort(acqResults.peakMetric, 2, 'descend');
 
 %--- Load information about each satellite --------------------------------
 % Maximum number of initialized channels is number of detected signals, but

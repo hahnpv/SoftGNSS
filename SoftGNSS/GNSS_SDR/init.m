@@ -34,6 +34,8 @@ format ('compact');
 format ('long', 'g');
 
 %--- Include folders with functions ---------------------------------------
+warning('off','MATLAB:dispatcher:nameConflict') % We have custom functions
+addpath util                % custom matlab overwrite functions for speed
 addpath include             % The software receiver functions
 addpath geoFunctions        % Position calculation related functions
 
@@ -74,3 +76,4 @@ if (gnssStart == 1)
     postProcessing
 end
 
+warning('on','MATLAB:dispatcher:nameConflict') 

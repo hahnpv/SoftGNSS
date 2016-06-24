@@ -153,7 +153,7 @@ for channelNr = 1:settings.numberOfChannels
         for loopCnt =  1:codePeriods
             
 %% GUI update -------------------------------------------------------------
-            % The GUI is updated every 50ms. This way Matlab GUI is still
+            % The GUI is updated every 1000ms. This way Matlab GUI is still
             % responsive enough. At the same time Matlab is not occupied
             % all the time with GUI task.
             if (rem(loopCnt, 1000) == 0)
@@ -234,9 +234,9 @@ for channelNr = 1:settings.numberOfChannels
             remCarrPhase = rem(trigarg(blksize+1), (2 * pi));
             
             % Finally compute the signal to mix the collected data to
-            % bandband
+            % bandbandcarrsig = expIm(trigarg(1:blksize));
             carrsig = exp(1i .* trigarg(1:blksize));
-
+            
 %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband
             qBasebandSignal = real(carrsig .* rawSignal);
