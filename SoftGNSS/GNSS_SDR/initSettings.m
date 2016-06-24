@@ -43,27 +43,31 @@ function settings = initSettings()
 settings.msToProcess        = 37000;        %[ms]
 
 % Number of channels to be used for signal processing
-settings.numberOfChannels   = 8;
+settings.numberOfChannels   = 6;
 
 % Move the starting point of processing. Can be used to start the signal
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 2e7; % 2*4*10*1e6 worked for 1 sat
+settings.skipNumberOfBytes     = 1e7; % 2*4*10*1e6 worked for 1 sat
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-
+%{
 %CTTC works, kind of, lat/lon within 1 degree but alt is 5M feet.
+% skipNumberOfBytes 1e6, msToProcess = 99000, dll=4/6, pll=50/75
+% all neg doppler which is feasible but unlikely? -> neg IF gets more sats
+% too?
+% Now seems to work with no change... 37000, basic dll/pll, no skip
 settings.fileName = ...
     'C:\Users\phahn\Data\CTTC\2013_04_04_GNSS_SIGNAL_at_CTTC_SPAIN.dat';
-settings.dataType           = 'int16'; % this works for CTTC. Finds 3 of the satellites and tracks
-settings.dataSize           = 2;    % bytes
+settings.dataType           = 'int16'; 
+settings.dataSize           = 2;           % bytes
 settings.fileType           = 2;
-settings.IF                 = 0.;      %[Hz]
+settings.IF                 = 0.;          %[Hz] 
 settings.samplingFreq       = 4000000;     %[Hz]
-
+%}
 %{
 % only finds 1-2 satellites... GNURadio Complex32
 settings.fileName = ...
@@ -74,17 +78,19 @@ settings.fileType           = 2;
 settings.IF                 = 110.;      %[Hz]
 settings.samplingFreq       = 2048000;     %[Hz]
 %}
-%{
+
+% 120s sample worked!
 settings.fileName = ...
-     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
-%     'C:\Users\phahn\Data\120s_sample.bin';
+     'C:\Users\phahn\Data\120s_sample.bin';     % WORKS, IF=0, freq=2048000
+%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % finds PRN10, freq=2048000
 %     'C:\Users\phahn\Data\park_fastgps';
+%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
 settings.dataType           = 'schar'; % they used schar instead of int8
 settings.fileType           = 2;
 settings.dataSize           = 1;    % bytes
-settings.IF                 = 110.;        %[Hz]
-settings.samplingFreq       = 1999998.17;     %[Hz]
-%}
+settings.IF                 = 0.;        %[Hz]
+settings.samplingFreq       = 2048000;     %[Hz]
+
 %{
 settings.fileName           = ...
    'C:\Users\phahn\Data\GNSS_signal_records\GPS_and_GIOVE_A-NN-fs16_3676-if4_1304.bin';
@@ -114,7 +120,7 @@ settings.acqSatelliteList   = 1:32;         %[PRN numbers]
 settings.acqSearchBand      = 20;           %[kHz] total bandwidth not one side!
 settings.acqSearchBin       = 250;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 2.;
+settings.acqThreshold       = 2.5;
 
 %% Tracking loops settings ================================================
 % Code tracking loop parameters
@@ -124,7 +130,7 @@ settings.dllCorrelatorSpacing    = 0.5;     %[chips]
 
 % Carrier tracking loop parameters
 settings.pllDampingRatio         = 0.7;
-settings.pllNoiseBandwidth       = 25;      %[Hz]
+settings.pllNoiseBandwidth       =  25;      %[Hz]
 
 %% Navigation solution settings ===========================================
 

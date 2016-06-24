@@ -97,10 +97,10 @@ for PRN = settings.acqSatelliteList
     %--- Make the correlation for whole frequency band (for all freq. bins)
     for frqBinIndex = 1:numberOfFrqBins
 
-        %--- Generate carrier wave frequency grid (0.5kHz step) -----------
+        %--- Generate carrier wave frequency grid -------------------------
         frqBins(frqBinIndex) = settings.IF - ...
                                (settings.acqSearchBand/2) * 1000 + ...
-                               0.5e3 * (frqBinIndex - 1);
+                               settings.acqSearchBin * (frqBinIndex - 1);
 
         %--- Generate local sine and cosine -------------------------------
         sigCarr = exp(1i*frqBins(frqBinIndex) * phasePoints);
@@ -139,10 +139,10 @@ for PRN = settings.acqSatelliteList
     % The second peak is chosen not closer than 1 chip to the highest peak
     
     %--- Find the correlation peak and the carrier frequency --------------
-    [peakSize, frequencyBinIndex] = max(max(results, [], 2));
+    [~, frequencyBinIndex] = max(max(results, [], 2));
 
     %--- Find code phase of the same correlation peak ---------------------
-    [peakSize, codePhase] = max(max(results));
+    [peakSize,  codePhase] = max(max(results));
 
     %--- Find 1 chip wide C/A code phase exclude range around the peak ----
     samplesPerCodeChip   = round(settings.samplingFreq / settings.codeFreqBasis);
@@ -170,7 +170,7 @@ for PRN = settings.acqSatelliteList
     acqResults.peakMetric(PRN) = peakSize/secondPeakSize;
     
     % If the result is above threshold, then there is a signal ...
-    if (peakSize/secondPeakSize) > settings.acqThreshold
+    if acqResults.peakMetric(PRN) > settings.acqThreshold
 
 %% Fine resolution frequency search =======================================
         
@@ -203,16 +203,16 @@ for PRN = settings.acqSatelliteList
         
         
         uniqFftPts = ceil((fftNumPts + 1) / 2);
-        [fftMax, fftMaxIndex] = max(fftxc);
+        [~, fftMaxIndex] = max(fftxc);
         fftFreqBins = (0 : uniqFftPts-1) * settings.samplingFreq/fftNumPts;
         if (fftMaxIndex > uniqFftPts) %and should validate using complex data
             if (rem(fftNumPts,2)==0)  %even number of points, so DC and Fs/2 computed
                 fftFreqBinsRev=-fftFreqBins((uniqFftPts-1):-1:2);
-                [fftMax, fftMaxIndex] = max(fftxc((uniqFftPts+1):length(fftxc)));
+                [~, fftMaxIndex] = max(fftxc((uniqFftPts+1):length(fftxc)));
                 acqResults.carrFreq(PRN)  = -fftFreqBinsRev(fftMaxIndex);
             else  %odd points so only DC is not included
                 fftFreqBinsRev=-fftFreqBins((uniqFftPts):-1:2);
-                [fftMax, fftMaxIndex] = max(fftxc((uniqFftPts+1):length(fftxc)));
+                [~, fftMaxIndex] = max(fftxc((uniqFftPts+1):length(fftxc)));
                 acqResults.carrFreq(PRN)  = fftFreqBinsRev(fftMaxIndex);
             end
         else

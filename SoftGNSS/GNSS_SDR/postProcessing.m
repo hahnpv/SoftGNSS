@@ -85,7 +85,7 @@ if (fid > 0)
                            (settings.codeFreqBasis / settings.codeLength));
         
         % Read data for acquisition. 11ms of signal are needed for the fine
-        % frequency estimation
+        % frequency estimation (10ms CA code + padding to start of code)
         
         data = fread(fid, dataAdaptCoeff*11*samplesPerCode, settings.dataType)';
                 
