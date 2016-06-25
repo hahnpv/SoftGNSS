@@ -68,7 +68,6 @@ end
 % This procedure yields relative arrival times between satellites, but not the absolute pseudoranges. To determine the set of pseudoranges for the first time, the channel with the earliest arriving subframe is assumed as reference and a minimum travel time is assigned to the reference channel based on the known orbits of the satellites and typical user altitudes (e.g., its value, for GPS, is in a range between 65 and 85 milliseconds).
 % All other pseudoranges are then derived with respect to the reference channel by adding the relative-arrival times.
 % TODO: is the settings offset updated once we know the closest satellite true range? or are we always carrying error in diff between settings.startOffset and truth?
-% TODO: if we have 4 or more channels can't we figure this out as we have 4 eqn (pseudoranges) and 4 unknowns (X, Y, Z, t)
 minimum         = floor(min(travelTime));
 travelTime      = travelTime - minimum + settings.startOffset;
 

@@ -13,7 +13,7 @@ function [phi, lambda, h] = cart2geo(X, Y, Z, i)
 
 %Kai Borre 10-13-98
 %Copyright (c) by Kai Borre
-%Revision: 1.0   Date: 1998/10/23  
+%Revision: 1.0   Date: 1998/10/23
 %
 % CVS record:
 % $Id: cart2geo.m,v 1.1.2.2 2006/08/22 13:45:59 dpl Exp $
@@ -27,12 +27,18 @@ ex2 = (2-f(i))*f(i)/((1-f(i))^2);
 c = a(i)*sqrt(1+ex2);
 phi = atan(Z/((sqrt(X^2+Y^2)*(1-(2-f(i)))*f(i))));
 
+iterations = 0;
 h = 0.1; oldh = 0;
 while abs(h-oldh) > 1.e-12
-   oldh = h;
-   N = c/sqrt(1+ex2*cos(phi)^2);
-   phi = atan(Z/((sqrt(X^2+Y^2)*(1-(2-f(i))*f(i)*N/(N+h)))));
-   h = sqrt(X^2+Y^2)/cos(phi)-N;
+    oldh = h;
+    N = c/sqrt(1+ex2*cos(phi)^2);
+    phi = atan(Z/((sqrt(X^2+Y^2)*(1-(2-f(i))*f(i)*N/(N+h)))));
+    h = sqrt(X^2+Y^2)/cos(phi)-N;
+    iterations = iterations + 1;
+    if iterations > 100
+        warning(['cart2geo failed to converge, dh=' num2str(abs(h-oldh))]);
+        break;
+    end
 end
 
 phi = phi*180/pi;

@@ -155,9 +155,16 @@ for PRN = settings.acqSatelliteList
         codePhaseRange = excludeRangeIndex2 : ...
                          (samplesPerCode + excludeRangeIndex1);
                          
-    elseif excludeRangeIndex2 >= samplesPerCode
+    elseif excludeRangeIndex2 > samplesPerCode  % PHAHN was >=
         codePhaseRange = (excludeRangeIndex2 - samplesPerCode) : ...
                          excludeRangeIndex1;
+                     
+    elseif excludeRangeIndex2 == samplesPerCode  % PHAHN was >=
+   %     codePhaseRange = (excludeRangeIndex2 - samplesPerCode) : ...
+   %                     excludeRangeIndex1;                     
+        codePhaseRange = [excludeRangeIndex2, 1 : ...
+                         excludeRangeIndex1];
+
     else
         codePhaseRange = [1:excludeRangeIndex1, ...
                           excludeRangeIndex2 : samplesPerCode];

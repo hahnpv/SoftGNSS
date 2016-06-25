@@ -60,7 +60,7 @@ for iter = 1:nmbOfIterations
             Rot_X = e_r_corr(traveltime, X(:, i));
 
             %--- Find the elevation angel of the satellite ----------------
-            [az(i), el(i), dist] = topocent(pos(1:3, :), Rot_X - pos(1:3, :));
+            [az(i), el(i), ~] = topocent(pos(1:3, :), Rot_X - pos(1:3, :));
 
             if (settings.useTropCorr == 1)
                 %--- Calculate tropospheric correction --------------------

@@ -40,16 +40,16 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 37000;        %[ms]
+settings.msToProcess        = 200000;        %[ms]
 
 % Number of channels to be used for signal processing
-settings.numberOfChannels   = 6;
+settings.numberOfChannels   = 12;
 
 % Move the starting point of processing. Can be used to start the signal
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 1e7; % 2*4*10*1e6 worked for 1 sat
+settings.skipNumberOfBytes     = 4e5;%4e6; % 2*4*10*1e6 worked for 1 sat
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
@@ -67,12 +67,14 @@ settings.dataSize           = 2;           % bytes
 settings.fileType           = 2;
 settings.IF                 = 0.;          %[Hz] 
 settings.samplingFreq       = 4000000;     %[Hz]
+settings.skipNumberOfBytes     = 4e6+4e5;%4e6; % 2*4*10*1e6 worked for 1 sat
 %}
 %{
-% only finds 1-2 satellites... GNURadio Complex32
+% GNURadio Complex = pair of singles
+% at 4e6 we pick up the right satellites but cant get preambles except 31.
 settings.fileName = ...
     'C:\Users\phahn\Data\SDRGPS\Feb06.bin';
-settings.dataType           = 'float32'; 
+settings.dataType           = 'single'; 
 settings.dataSize           = 4;    % bytes
 settings.fileType           = 2;
 settings.IF                 = 110.;      %[Hz]
@@ -81,15 +83,16 @@ settings.samplingFreq       = 2048000;     %[Hz]
 
 % 120s sample worked!
 settings.fileName = ...
-     'C:\Users\phahn\Data\120s_sample.bin';     % WORKS, IF=0, freq=2048000
-%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % finds PRN10, freq=2048000
+     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % WORKS at location 4e5
+%     'C:\Users\phahn\Data\RTLSDR\120s_sample.bin';     % WORKS, IF=0, freq=2048000
 %     'C:\Users\phahn\Data\park_fastgps';
 %     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
 settings.dataType           = 'schar'; % they used schar instead of int8
 settings.fileType           = 2;
 settings.dataSize           = 1;    % bytes
-settings.IF                 = 0.;        %[Hz]
+settings.IF                 = 110.;        %[Hz]
 settings.samplingFreq       = 2048000;     %[Hz]
+settings.skipNumberOfBytes     = 4e5;%feb6.bin
 
 %{
 settings.fileName           = ...
@@ -115,22 +118,22 @@ settings.codeLength         = 1023;
 settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition
-settings.acqSatelliteList   = 1:32;         %[PRN numbers]
+settings.acqSatelliteList   = 2:32;%[1 10 14 22 31]; %1:32;         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
 settings.acqSearchBand      = 20;           %[kHz] total bandwidth not one side!
 settings.acqSearchBin       = 250;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 2.5;
+settings.acqThreshold       = 2.;
 
 %% Tracking loops settings ================================================
 % Code tracking loop parameters
 settings.dllDampingRatio         = 0.7;
-settings.dllNoiseBandwidth       =   2;       %[Hz]
+settings.dllNoiseBandwidth       =   4;%2;       %[Hz]
 settings.dllCorrelatorSpacing    = 0.5;     %[chips]
 
 % Carrier tracking loop parameters
 settings.pllDampingRatio         = 0.7;
-settings.pllNoiseBandwidth       =  25;      %[Hz]
+settings.pllNoiseBandwidth       =  50;%25;      %[Hz]
 
 %% Navigation solution settings ===========================================
 
