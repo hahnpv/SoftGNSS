@@ -48,8 +48,11 @@ settings.numberOfChannels   = 8;
 % Move the starting point of processing. Can be used to start the signal
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
-% based only. 
-settings.skipNumberOfBytes     = 4e5;%4e6; % 2*4*10*1e6 worked for 1 sat
+% based only. For Real sample files it skips the number of bytes as indicated
+% here. For I/Q files it skips twice the number of bytes as indicated here
+% to consider both I and Q samples
+settings.skipNumberOfSamples     = 0*2.5e6;
+settings.skipNumberOfBytes     = 0;
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
@@ -93,7 +96,8 @@ settings.dataSize           = 1;    % bytes
 settings.IF                 = 110.;        %[Hz]
 settings.samplingFreq       = 2048000;     %[Hz]
 settings.skipNumberOfBytes  = 4e5;%feb6.bin
-settings.msToProcess        = 100000;        %[ms]
+settings.skipNumberOfSamples = 4e5;%feb6.bin
+settings.msToProcess        = 210000;        %[ms]
 settings.numberOfChannels   = 6;
 
 
@@ -126,9 +130,15 @@ settings.acqSatelliteList   = 1:32;         %[PRN numbers]
 settings.acqSearchBand      = 20;           %[kHz] total bandwidth not one side!
 settings.acqSearchBin       = 125;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 2.0;
+settings.acqThreshold       = 2.05;%1.75;
+% No. of code periods for coherent integration (multiple of 2)
+settings.acquisition.cohCodePeriods=2;%10;%
+% No. of non-coherent summations
+settings.acquisition.nonCohSums=4;
 
 %% Tracking loops settings ================================================
+settings.enableFastTracking     = 0;
+
 % Code tracking loop parameters
 settings.dllDampingRatio         = 0.7;
 settings.dllNoiseBandwidth       =   2;       %[Hz]
@@ -136,18 +146,21 @@ settings.dllCorrelatorSpacing    = 0.5;     %[chips]
 
 % Carrier tracking loop parameters
 settings.pllDampingRatio         = 0.7;
-settings.pllNoiseBandwidth       =  25;      %[Hz]
+settings.pllNoiseBandwidth       = 25;      %[Hz]
+settings.fllDampingRatio         = 0.7;
+settings.fllNoiseBandwidth       = 10;      %[Hz]
 
 %% Navigation solution settings ===========================================
 
-% Period for calculating pseudoranges and position
-settings.navSolPeriod       = 100;          %[ms]
+% Rate for calculating pseudorange and position
+settings.navSolRate         = 10;            %[Hz]
+settings.navSolPeriod       = 1000/settings.navSolRate; %ms
 
 % Elevation mask to exclude signals from satellites at low elevation
 settings.elevationMask      = 10;           %[degrees 0 - 90]
 % Enable/dissable use of tropospheric correction
-settings.useTropCorr        = 1;            % 0 - Off
-                                            % 1 - On
+settings.useTropCorr        = 0;            % 0 - Off
+% 1 - On
 
 % True position of the antenna in UTM system (if known). Otherwise enter
 % all NaN's and mean position will be used as a reference .
@@ -162,5 +175,25 @@ settings.plotTracking       = 1;            % 0 - Off
 
 %% Constants ==============================================================
 settings.c                  = 299792458;    % The speed of light, [m/s]
-settings.startOffset        = 68.802;       %[ms] Initial sign. travel time
-% Results are insensitive to value of startOffset it is an initial guess.
+settings.startOffset        = 68.802;       %[ms] Initial sign. travel time (guess)
+
+%% CNo Settings============================================================
+% Accumulation interval in Tracking (in Sec)
+settings.CNo.accTime=0.001;
+% Show C/No during Tracking;1-on;0-off;
+settings.CNo.enableVSM=0;
+% Accumulation interval for computing VSM C/No (in ms)
+settings.CNo.VSMinterval=400;
+% Accumulation interval for computing PRM C/No (in ms)
+settings.CNo.PRM_K=200;
+% No. of samples to calculate narrowband power;
+% Possible Values for M=[1,2,4,5,10,20];
+% K should be an integral multiple of M i.e. K=nM
+settings.CNo.PRM_M=20;
+% Accumulation interval for computing MOM C/No (in ms)
+settings.CNo.MOMinterval=200;
+% Enable/disable the C/No plots for all the channels
+% 0 - Off ; 1 - On;
+settings.CNo.Plot = 1;
+%Enable vector tracking when 1, otherwise scalar tracking.
+settings.VLLen = 0;

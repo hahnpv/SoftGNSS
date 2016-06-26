@@ -177,7 +177,7 @@ try
     settings.fileName           = get(handles.editFileName, 'String');
     settings.numberOfChannels   = edit2double(handles.editNumberOfChannels);
     settings.msToProcess        = edit2double(handles.editMsToProcess);    
-    settings.skipNuberOfBytes   = edit2double(handles.editSkipNumberOfBytes);
+    settings.skipNumberOfBytes   = edit2double(handles.editSkipNumberOfBytes);
     settings.IF                 = edit2double(handles.editIF);
     settings.samplingFreq       = edit2double(handles.editSamplingFreq);
     settings.dataType           = get(handles.editDataType, 'String');

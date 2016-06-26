@@ -10,7 +10,7 @@
 
 %--------------------------------------------------------------------------
 %                           SoftGNSS v3.0
-% 
+%
 % Copyright (C) Darius Plausinaitis
 % Written by Darius Plausinaitis, Dennis M. Akos
 % Some ideas by Dennis M. Akos
@@ -54,13 +54,14 @@
 %
 % 5) Plot the results.
 
+
 %% Initialization =========================================================
 disp ('Starting processing...');
 
 [fid, message] = fopen(settings.fileName, 'rb');
 
 %Initialize the multiplier to adjust for the data type
-if (settings.fileType==1) 
+if (settings.fileType==1)
     dataAdaptCoeff=1;
 else
     dataAdaptCoeff=2;
@@ -68,45 +69,57 @@ end
 
 %If success, then process the data
 if (fid > 0)
-    
+
     % Move the starting point of processing. Can be used to start the
     % signal processing at any point in the data record (e.g. good for long
     % records or for signal processing in blocks).
-    fseek(fid, dataAdaptCoeff*settings.skipNumberOfBytes, 'bof'); 
+    fseek(fid, dataAdaptCoeff*settings.skipNumberOfSamples, 'bof');
 
-%% Acquisition ============================================================
+    %% Acquisition ============================================================
 
     % Do acquisition if it is not disabled in settings or if the variable
     % acqResults does not exist.
-    if ((settings.skipAcquisition == 0) || ~exist('acqResults', 'var'))
-        
+    if ((settings.skipAcquisition == 0))% || ~exist('acqResults', 'var'))
+
         % Find number of samples per spreading code
         samplesPerCode = round(settings.samplingFreq / ...
-                           (settings.codeFreqBasis / settings.codeLength));
-        
-        % Read data for acquisition. 11ms of signal are needed for the fine
-        % frequency estimation (10ms CA code + padding to start of code)
-        
-        data = fread(fid, dataAdaptCoeff*11*samplesPerCode, settings.dataType)';
-                
-        if (dataAdaptCoeff==2)    
-            data1=data(1:2:end);    
-            data2=data(2:2:end);    
-            data=data1 + 1i .* data2;    
-        end
+            (settings.codeFreqBasis / settings.codeLength));
+
+
 
         %--- Do the acquisition -------------------------------------------
         disp ('   Acquiring satellites...');
+
+        % Read the required amount of data depending on the data file type
+        % and the number of code period of coherent and non-coherent 
+        % integration and invoke the acquisition function
+
+        data = fread(fid, ...
+            dataAdaptCoeff*(settings.acquisition.cohCodePeriods*settings.acquisition.nonCohSums+1)*samplesPerCode*6, ...
+            settings.dataType)';
+
+        if (dataAdaptCoeff==2)
+            data1=data(1:2:end);
+            data2=data(2:2:end);
+            data=data1 + 1i .* data2;
+        end
+
         acqResults = acquisition(data, settings);
 
+
+        % Plot the acquisition results
         plotAcquisition(acqResults);
+    elseif(settings.skipAcquisition == 1)
+            disp('skipAcquistion==1');
+            load acqresults
+            plotAcquisition(acqResults);
     end
 
-%% Initialize channels and prepare for the run ============================
+    %% Initialize channels and prepare for the run ============================
 
     % Start further processing only if a GNSS signal was acquired (the
     % field FREQUENCY will be set to 0 for all not acquired signals)
-    if (any(acqResults.carrFreq))
+    if (any(acqResults.peakMetric>settings.acqThreshold))
         channel = preRun(acqResults, settings);
         showChannelStatus(channel, settings);
     else
@@ -116,34 +129,65 @@ if (fid > 0)
         return;
     end
 
-%% Track the signal =======================================================
-    startTime = now;
-    disp (['   Tracking started at ', datestr(startTime)]);
+    %% Track the signal =======================================================
+    if ~settings.VLLen
+       
+        startTime = now;
+        disp (['   Tracking started at ', datestr(startTime)]);
 
-    % Process all channels for given data block
-    [trackResults, channel] = tracking(fid, channel, settings);
+        % Process all channels for given data block
+       
+        [trackResults, channel] = tracking(fid, channel, settings);
+       
+        % Close the data file
+        fclose(fid);
 
-    % Close the data file
-    fclose(fid);
+        disp(['   Tracking is over (elapsed time ', ...
+            datestr(now - startTime, 13), ')'])
+
+        % Auto save the acquisition & tracking results to a file to allow
+        % running the positioning solution afterwards.
+        disp('   Saving Acq & Tracking results to file "trackingResults.mat"')
+        save('trackingResults', ...
+            'trackResults', 'settings', 'acqResults', 'channel');
+%%%%%%%%%% when delete, uncomment above
+%     load trackingResults
+
+    else
+        disp('skip scalar tracking, load exisiting results')
+
+        load 'trackingResults'
+        settings.VLLen = 1;
+    end
+
+    %% Calculate navigation solutions =========================================
     
-    disp(['   Tracking is over (elapsed time ', ...
-                                        datestr(now - startTime, 13), ')'])     
+    if ~settings.VLLen
+        disp('   Calculating navigation solutions...');
+ %       load 'navSolutions'
+        [navSolutions, eph, svTimeTable,activeChnList] = postNavigation(trackResults, settings);
+        save('navSolutions','navSolutions','eph','svTimeTable','activeChnList')
+    else
+        disp('skip postNavigation, load existing navSolution')
+        %input the path and file name of the existing navSolution saved
+        %from scalar tracking and calculation
+        load 'navSolutions'
+        disp('start vector tracking')
+        %start vector tracking
+        trackingv(fid, channel,trackResults,navSolutions,eph,activeChnList,svTimeTable, settings);
+        return;
+%         load 'C:\Users\gps\Desktop\SihaoZ\dynamic\9_13_2010_14h_53min_25s\navSolutionscarfig8allfading190spll10dll1'
+        
+    end
 
-    % Auto save the acquisition & tracking results to a file to allow
-    % running the positioning solution afterwards.
-    disp('   Saving Acq & Tracking results to file "trackingResults.mat"')
-    save('trackingResults', ...
-                      'trackResults', 'settings', 'acqResults', 'channel');                  
 
-%% Calculate navigation solutions =========================================
-    disp('   Calculating navigation solutions...');
-    navSolutions = postNavigation(trackResults, settings);
+
     disp('   Processing is complete for this data block');
 
-%% Plot all results ===================================================
+    %% Plot all results ===================================================
     disp ('   Ploting results...');
     if settings.plotTracking
-        plotTracking(strfind([trackResults.status],'T'), trackResults, settings);
+        plotTracking(1:settings.numberOfChannels, trackResults, settings);
     end
 
     plotNavigation(navSolutions, settings);

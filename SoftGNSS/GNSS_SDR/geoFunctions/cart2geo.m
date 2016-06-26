@@ -17,6 +17,17 @@ function [phi, lambda, h] = cart2geo(X, Y, Z, i)
 %
 % CVS record:
 % $Id: cart2geo.m,v 1.1.2.2 2006/08/22 13:45:59 dpl Exp $
+
+% _________________________________________________________________________
+%
+% Document Change History:
+%
+% S.No	Date	  Author	Changes
+% ----	----     ----------	-----------------------------------------------
+% 1.	03/20/07 Sirish 	Added lines 41,47-51 to fix the infinite loop
+%                           problem
+%
+% _________________________________________________________________________
 %==========================================================================
 
 a = [6378388 6378160 6378135 6378137 6378137];
@@ -27,8 +38,8 @@ ex2 = (2-f(i))*f(i)/((1-f(i))^2);
 c = a(i)*sqrt(1+ex2);
 phi = atan(Z/((sqrt(X^2+Y^2)*(1-(2-f(i)))*f(i))));
 
-iterations = 0;
 h = 0.1; oldh = 0;
+iterations = 0;
 while abs(h-oldh) > 1.e-12
     oldh = h;
     N = c/sqrt(1+ex2*cos(phi)^2);
@@ -36,7 +47,7 @@ while abs(h-oldh) > 1.e-12
     h = sqrt(X^2+Y^2)/cos(phi)-N;
     iterations = iterations + 1;
     if iterations > 100
-        warning(['cart2geo failed to converge, dh=' num2str(abs(h-oldh))]);
+        fprintf('Failed to approximate h with desired precision. h-oldh: %e.\n', h-oldh);
         break;
     end
 end

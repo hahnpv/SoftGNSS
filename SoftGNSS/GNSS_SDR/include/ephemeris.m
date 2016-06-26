@@ -1,10 +1,9 @@
-function [eph, TOW] = ephemeris(bits, D30Star)
+function [eph, TOW] = ephemeris(bits,D29Star,D30Star)  
 %Function decodes ephemerides and TOW from the given bit stream. The stream
 %(array) in the parameter BITS must contain 1500 bits. The first element in
 %the array must be the first bit of a subframe. The subframe ID of the
 %first subframe in the array is not important.
 %
-%Function does not check parity!
 %
 %[eph, TOW] = ephemeris(bits, D30Star)
 %
@@ -12,8 +11,12 @@ function [eph, TOW] = ephemeris(bits, D30Star)
 %       bits        - bits of the navigation messages (5 subframes).
 %                   Type is character array and it must contain only
 %                   characters '0' or '1'.
-%       D30Star     - The last bit of the previous nav-word. Refer to the
+%       D29Star     - The 29th bit of the previous nav-word. Refer to the
 %                   GPS interface control document ICD (IS-GPS-200D) for
+%                   more details on the parity checking. Parameter type is
+%                   char. It must contain only characters '0' or '1'.
+%       D30Star     - The 30th (last) bit of the previous nav-word. Refer to 
+%                   the GPS interface control document ICD (IS-GPS-200D) for
 %                   more details on the parity checking. Parameter type is
 %                   char. It must contain only characters '0' or '1'.
 %   Outputs:
@@ -23,9 +26,10 @@ function [eph, TOW] = ephemeris(bits, D30Star)
 
 %--------------------------------------------------------------------------
 %                           SoftGNSS v3.0
-% 
+%
 % Copyright (C) Darius Plausinaitis and Kristin Larson
 % Written by Darius Plausinaitis and Kristin Larson
+% Modified by Xiaofan Li at University of Colorado at Boulder
 %--------------------------------------------------------------------------
 %This program is free software; you can redistribute it and/or
 %modify it under the terms of the GNU General Public License
@@ -57,13 +61,16 @@ if ~ischar(bits)
     error('The parameter BITS must be a character array!');
 end
 
+if ~ischar(D29Star)  
+    error('The parameter D29Star must be a char!');
+end
+
 if ~ischar(D30Star)
     error('The parameter D30Star must be a char!');
 end
 
 % Pi used in the GPS coordinate system
-gpsPi = 3.1415926535898; 
-
+gpsPi = 3.1415926535898;
 %% Decode all 5 sub-frames ================================================
 for i = 1:5
 
@@ -73,14 +80,19 @@ for i = 1:5
     %--- Correct polarity of the data bits in all 10 words ----------------
     for j = 1:10
         [subframe(30*(j-1)+1 : 30*j)] = ...
-            checkPhase(subframe(30*(j-1)+1 : 30*j), D30Star);
-        
+            parityCheck(subframe(30*(j-1)+1 : 30*j), D29Star, D30Star);
+        D29Star = subframe(30*j-1);
         D30Star = subframe(30*j);
     end
 
     %--- Decode the sub-frame id ------------------------------------------
     % For more details on sub-frame contents please refer to GPS IS.
     subframeID = bin2dec(subframe(50:52));
+    % If a wrong subframe ID is still found after the parity check, then
+    % the IF Data used in the post-processing is not reliable
+    if subframeID >5 || subframeID <1  
+        error('Wrong subframe ID , IF Data is not reliable!');
+    end
 
     %--- Decode sub-frame based on the sub-frames id ----------------------
     % The task is to select the necessary bits and convert them to decimal
@@ -153,5 +165,5 @@ end % for all 5 sub-frames ...
 %% Compute the time of week (TOW) of the first sub-frames in the array ====
 % Also correct the TOW. The transmitted TOW is actual TOW of the next
 % subframe and we need the TOW of the first subframe in this data block
-% (the variable subframe at this point contains bits of the last subframe). 
+% (the variable subframe at this point contains bits of the last subframe).
 TOW = bin2dec(subframe(31:47)) * 6 - 30;
