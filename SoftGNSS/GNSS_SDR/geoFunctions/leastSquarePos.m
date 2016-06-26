@@ -30,7 +30,7 @@ function [pos, el, az, dop] = leastSquarePos(satpos, obs, settings)
 %==========================================================================
 
 %=== Initialization =======================================================
-nmbOfIterations = 7;
+nmbOfIterations = 10;
 
 dtr     = pi/180;
 pos     = zeros(4, 1);
@@ -93,7 +93,7 @@ for iter = 1:nmbOfIterations
     
     %--- Apply position update --------------------------------------------
     pos = pos + x;
-    
+ 
 end % for iter = 1:nmbOfIterations
 
 pos = pos';

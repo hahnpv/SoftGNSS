@@ -40,10 +40,10 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 200000;        %[ms]
+settings.msToProcess        = 37000;        %[ms]
 
 % Number of channels to be used for signal processing
-settings.numberOfChannels   = 12;
+settings.numberOfChannels   = 8;
 
 % Move the starting point of processing. Can be used to start the signal
 % processing at any point in the data record (e.g. for long records). fseek
@@ -92,7 +92,10 @@ settings.fileType           = 2;
 settings.dataSize           = 1;    % bytes
 settings.IF                 = 110.;        %[Hz]
 settings.samplingFreq       = 2048000;     %[Hz]
-settings.skipNumberOfBytes     = 4e5;%feb6.bin
+settings.skipNumberOfBytes  = 4e5;%feb6.bin
+settings.msToProcess        = 100000;        %[ms]
+settings.numberOfChannels   = 6;
+
 
 %{
 settings.fileName           = ...
@@ -118,27 +121,27 @@ settings.codeLength         = 1023;
 settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition
-settings.acqSatelliteList   = 2:32;%[1 10 14 22 31]; %1:32;         %[PRN numbers]
+settings.acqSatelliteList   = 1:32;         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
 settings.acqSearchBand      = 20;           %[kHz] total bandwidth not one side!
-settings.acqSearchBin       = 250;          %[Hz]  Bin size
+settings.acqSearchBin       = 125;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 2.;
+settings.acqThreshold       = 2.0;
 
 %% Tracking loops settings ================================================
 % Code tracking loop parameters
 settings.dllDampingRatio         = 0.7;
-settings.dllNoiseBandwidth       =   4;%2;       %[Hz]
+settings.dllNoiseBandwidth       =   2;       %[Hz]
 settings.dllCorrelatorSpacing    = 0.5;     %[chips]
 
 % Carrier tracking loop parameters
 settings.pllDampingRatio         = 0.7;
-settings.pllNoiseBandwidth       =  50;%25;      %[Hz]
+settings.pllNoiseBandwidth       =  25;      %[Hz]
 
 %% Navigation solution settings ===========================================
 
 % Period for calculating pseudoranges and position
-settings.navSolPeriod       = 500;          %[ms]
+settings.navSolPeriod       = 100;          %[ms]
 
 % Elevation mask to exclude signals from satellites at low elevation
 settings.elevationMask      = 10;           %[degrees 0 - 90]
@@ -160,3 +163,4 @@ settings.plotTracking       = 1;            % 0 - Off
 %% Constants ==============================================================
 settings.c                  = 299792458;    % The speed of light, [m/s]
 settings.startOffset        = 68.802;       %[ms] Initial sign. travel time
+% Results are insensitive to value of startOffset it is an initial guess.
