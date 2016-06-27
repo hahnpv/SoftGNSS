@@ -36,6 +36,7 @@ format ('long', 'g');
 %--- Include folders with functions ---------------------------------------
 warning('off','MATLAB:dispatcher:nameConflict') % We have custom functions
 addpath util                % custom matlab overwrite functions for speed
+addpath analysis            % analysis tools
 addpath include             % The software receiver functions
 addpath geoFunctions        % Position calculation related functions
 
