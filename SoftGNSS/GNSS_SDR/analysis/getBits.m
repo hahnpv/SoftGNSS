@@ -55,6 +55,14 @@ for channelNr = activeChnList
             catch exc
                 warning(['Parity check failed! Channel ' num2str(channelNr) ' subframe ' num2str(i) ' word ' num2str(j)]);
             end
+
+    		% tmp - try the other parity function
+            % navPartyChk expects +1, -1 not 1/0, and not dec2bin.
+%        	status = navPartyChk(logical([D29Star, D30Star, subframe(30*(j-1)+1 : 30*j)]'-'0')');
+%            if status == 0
+%                warning(['Second Parity check failed! Channel ' num2str(channelNr) ' subframe ' num2str(i) ' word ' num2str(j)]);
+%            end
+			
             D29Star = subframe(30*j-1);
             D30Star = subframe(30*j);
         end
