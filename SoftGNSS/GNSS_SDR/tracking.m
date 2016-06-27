@@ -146,7 +146,7 @@ for channelNr = 1:settings.numberOfChannels
         % Get a vector with the C/A code sampled 1x/chip
         caCode = generateCAcode(channel(channelNr).PRN);
         % Then make it possible to do early and late versions
-        caCode = [caCode(1023) caCode caCode(1)];
+        caCode = [caCode(1023) caCode caCode(1)]; %#ok<AGROW>
 
         %--- Perform various initializations ------------------------------
 
@@ -227,7 +227,7 @@ for channelNr = 1:settings.numberOfChannels
             if (dataAdaptCoeff==2)
                 rawSignal1=rawSignal(1:2:end);
                 rawSignal2=rawSignal(2:2:end);
-                rawSignal = rawSignal1 + i .* rawSignal2;  %transpose vector
+                rawSignal = rawSignal1 + 1i .* rawSignal2;  %transpose vector
             end
 
             % If did not read in enough samples, then could be out of
@@ -271,7 +271,7 @@ for channelNr = 1:settings.numberOfChannels
             remCarrPhase = rem(trigarg(blksize+1), (2 * pi));
 
             % Finally compute the signal to mix the collected data to bandband
-            carrsig = exp(i .* trigarg(1:blksize));
+            carrsig = exp(1i .* trigarg(1:blksize));
 
             %% Generate the six standard accumulated values ---------------------------
             % First mix to baseband

@@ -176,8 +176,6 @@ if (fid > 0)
         %start vector tracking
         trackingv(fid, channel,trackResults,navSolutions,eph,activeChnList,svTimeTable, settings);
         return;
-%         load 'C:\Users\gps\Desktop\SihaoZ\dynamic\9_13_2010_14h_53min_25s\navSolutionscarfig8allfading190spll10dll1'
-        
     end
 
 

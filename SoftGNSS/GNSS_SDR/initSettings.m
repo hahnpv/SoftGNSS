@@ -181,7 +181,7 @@ settings.startOffset        = 68.802;       %[ms] Initial sign. travel time (gue
 % Accumulation interval in Tracking (in Sec)
 settings.CNo.accTime=0.001;
 % Show C/No during Tracking;1-on;0-off;
-settings.CNo.enableVSM=0;
+settings.CNo.enableVSM=1;
 % Accumulation interval for computing VSM C/No (in ms)
 settings.CNo.VSMinterval=400;
 % Accumulation interval for computing PRM C/No (in ms)
@@ -196,4 +196,4 @@ settings.CNo.MOMinterval=200;
 % 0 - Off ; 1 - On;
 settings.CNo.Plot = 1;
 %Enable vector tracking when 1, otherwise scalar tracking.
-settings.VLLen = 0;
+settings.VLLen = 1;
