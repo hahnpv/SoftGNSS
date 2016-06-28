@@ -10,7 +10,7 @@
 
 %--------------------------------------------------------------------------
 %                           SoftGNSS v3.0
-%
+% 
 % Copyright (C) Darius Plausinaitis
 % Written by Darius Plausinaitis, Dennis M. Akos
 % Some ideas by Dennis M. Akos
@@ -104,6 +104,8 @@ if (fid > 0)
             data=data1 + 1i .* data2;
         end
 
+        %--- Do the acquisition -------------------------------------------
+        disp ('   Acquiring satellites...');
         acqResults = acquisition(data, settings);
 
 

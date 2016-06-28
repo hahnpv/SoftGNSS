@@ -97,7 +97,7 @@ settings.IF                 = 110.;        %[Hz]
 settings.samplingFreq       = 2048000;     %[Hz]
 settings.skipNumberOfBytes  = 4e5;%feb6.bin
 settings.skipNumberOfSamples = 4e5;%feb6.bin
-settings.msToProcess        = 210000;        %[ms]
+settings.msToProcess        = 100000;        %[ms]
 settings.numberOfChannels   = 6;
 
 
@@ -159,8 +159,8 @@ settings.navSolPeriod       = 1000/settings.navSolRate; %ms
 % Elevation mask to exclude signals from satellites at low elevation
 settings.elevationMask      = 10;           %[degrees 0 - 90]
 % Enable/dissable use of tropospheric correction
-settings.useTropCorr        = 0;            % 0 - Off
-% 1 - On
+settings.useTropCorr        = 1;            % 0 - Off
+                                            % 1 - On
 
 % True position of the antenna in UTM system (if known). Otherwise enter
 % all NaN's and mean position will be used as a reference .
@@ -181,7 +181,7 @@ settings.startOffset        = 68.802;       %[ms] Initial sign. travel time (gue
 % Accumulation interval in Tracking (in Sec)
 settings.CNo.accTime=0.001;
 % Show C/No during Tracking;1-on;0-off;
-settings.CNo.enableVSM=1;
+settings.CNo.enableVSM=0;
 % Accumulation interval for computing VSM C/No (in ms)
 settings.CNo.VSMinterval=400;
 % Accumulation interval for computing PRM C/No (in ms)
@@ -196,4 +196,4 @@ settings.CNo.MOMinterval=200;
 % 0 - Off ; 1 - On;
 settings.CNo.Plot = 1;
 %Enable vector tracking when 1, otherwise scalar tracking.
-settings.VLLen = 1;
+settings.VLLen = 0;

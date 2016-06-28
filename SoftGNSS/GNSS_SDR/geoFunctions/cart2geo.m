@@ -38,6 +38,7 @@ ex2 = (2-f(i))*f(i)/((1-f(i))^2);
 c = a(i)*sqrt(1+ex2);
 phi = atan(Z/((sqrt(X^2+Y^2)*(1-(2-f(i)))*f(i))));
 
+iterations = 0;
 h = 0.1; oldh = 0;
 iterations = 0;
 while abs(h-oldh) > 1.e-12
@@ -47,7 +48,7 @@ while abs(h-oldh) > 1.e-12
     h = sqrt(X^2+Y^2)/cos(phi)-N;
     iterations = iterations + 1;
     if iterations > 100
-        fprintf('Failed to approximate h with desired precision. h-oldh: %e.\n', h-oldh);
+        warning(['cart2geo failed to converge, dh=' num2str(abs(h-oldh))]);
         break;
     end
 end

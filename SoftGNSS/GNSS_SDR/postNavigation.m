@@ -278,13 +278,13 @@ for currMeasNr =1:fix((min(lastSample) - ...
         
         %=== Convert to UTM coordinate system =============================
         navSolutions.utmZone = findUtmZone(navSolutions.latitude(currMeasNr), ...
-            navSolutions.longitude(currMeasNr));
-        
+                                           navSolutions.longitude(currMeasNr));
+
         [navSolutions.E(currMeasNr), ...
-            navSolutions.N(currMeasNr), ...
-            navSolutions.U(currMeasNr)] = cart2utm(xyzdt(1), xyzdt(2), ...
-            xyzdt(3), ...
-            navSolutions.utmZone);
+         navSolutions.N(currMeasNr), ...
+         navSolutions.U(currMeasNr)] = cart2utm(xyzdt(1), xyzdt(2), ...
+                                                xyzdt(3), ...
+                                                navSolutions.utmZone);
         
         % Compute the corrected receiver time
         navSolutions.rxTime(currMeasNr)=rxTime-navSolutions.dt(currMeasNr)/settings.c;
@@ -322,23 +322,18 @@ for currMeasNr =1:fix((min(lastSample) - ...
         navSolutions.E(currMeasNr)           = NaN;
         navSolutions.N(currMeasNr)           = NaN;
         navSolutions.U(currMeasNr)           = NaN;
-        navSolutions.rawRxTime               = NaN;
-        navSolutions.absoluteSample          = NaN;
-        navSolutions.rxTime                  = NaN;
-        
+
         navSolutions.channel.az(activeChnList, currMeasNr) = ...
-            NaN(1, length(activeChnList));
+                                             NaN(1, length(activeChnList));
         navSolutions.channel.el(activeChnList, currMeasNr) = ...
-            NaN(1, length(activeChnList));
-        
+                                             NaN(1, length(activeChnList));
+
         % TODO: Know issue. Satellite positions are not updated if the
         % satellites are excluded do to elevation mask. Therefore rasing
         % satellites will be not included even if they will be above
         % elevation mask at some point. This would be a good place to
         % update positions of the excluded satellites.
-        
-        
-        
+
     end % if size(activeChnList, 2) > 3
     
 end
