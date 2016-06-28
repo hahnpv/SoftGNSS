@@ -43,25 +43,33 @@ for channelNr = activeChnList
     D29Star = bits(1);
     D30Star = bits(2);
     bits = bits(3:end);
-    
+    %{
+    bits2 = navBits;
+    bits2(bits2 > 0)  = 1;
+    bits2(bits2 <= 0) = -1;
+    %}
     for i = 1:nsubframes
         subframe = bits(300*(i-1)+1 : 300*i)';
         
         for j = 1:10
             try
+            tmp = [D29Star, D30Star, subframe(30*(j-1)+1 : 30*j)]; % ah. parityCheck already fixed parity!
+
             % perform parity check on each word
             [subframe(30*(j-1)+1 : 30*j)] = ...
                 parityCheck(subframe(30*(j-1)+1 : 30*j), D29Star, D30Star);
             catch exc
-                warning(['Parity check failed! Channel ' num2str(channelNr) ' subframe ' num2str(i) ' word ' num2str(j)]);
+                warning(['Parity check failed! Channel ' num2str(channelNr) ' subframe ' num2str(bin2dec(subframe(50:52))) ' word ' num2str(j)]);
             end
 
     		% tmp - try the other parity function
             % navPartyChk expects +1, -1 not 1/0, and not dec2bin.
-%        	status = navPartyChk(logical([D29Star, D30Star, subframe(30*(j-1)+1 : 30*j)]'-'0')');
-%            if status == 0
-%                warning(['Second Parity check failed! Channel ' num2str(channelNr) ' subframe ' num2str(i) ' word ' num2str(j)]);
-%            end
+            tmp = bin2dec(tmp(:));
+            tmp(tmp==0) = -1;
+        	status = navPartyChk(tmp');
+            if status == 0
+                warning(['Second Parity check failed! Channel ' num2str(channelNr) ' subframe ' num2str(bin2dec(subframe(50:52))) ' word ' num2str(j)]);
+            end
 			
             D29Star = subframe(30*j-1);
             D30Star = subframe(30*j);
