@@ -134,7 +134,7 @@ if (fid > 0)
         subplot(2,2,1:2);
         pwelch(data, 32758, 2048, 16368, settings.samplingFreq/1e6)
     else % I/Q Data
-        subplot(3,2,1:2);
+        subplot(4,2,1:2);
         [sigspec,freqv]=pwelch(data, 32758, 2048, 16368, settings.samplingFreq,'twosided');
         plot(([-(freqv(length(freqv)/2:-1:1));freqv(1:length(freqv)/2)])/1e6, ...
             10*log10([sigspec(length(freqv)/2+1:end);
@@ -151,14 +151,14 @@ if (fid > 0)
     if (settings.fileType == 1)
         subplot(2, 2, 4);
         hist(data, -128:128)
-        
+
         dmax = max(abs(data)) + 1;
         axis tight;     adata = axis;
         axis([-dmax dmax adata(3) adata(4)]);
         grid on;        title ('Histogram');
         xlabel('Bin');  ylabel('Number in bin');
     else
-        subplot(3, 2, 6);
+        subplot(4, 2, 4);
         hist(real(data), -128:128)
         dmax = max(abs(data)) + 1;
         axis tight;     adata = axis;
@@ -166,14 +166,45 @@ if (fid > 0)
         grid on;        title ('Histogram (I)');
         xlabel('Bin');  ylabel('Number in bin');
         
-        subplot(3, 2, 5);
+        subplot(4, 2, 3);
         hist(imag(data), -128:128)
         dmax = max(abs(data)) + 1;
         axis tight;     adata = axis;
         axis([-dmax dmax adata(3) adata(4)]);
         grid on;        title ('Histogram (Q)');
         xlabel('Bin');  ylabel('Number in bin');
+      
+        % magnitude of signal
+        subplot(4, 2, 6);
+        hist(abs(data), 0:1:ceil(max(abs(data))))
+        dmax = max(abs(data)) + 1;
+        axis tight;     adata = axis;
+        axis([0 dmax adata(3) adata(4)]);
+        grid on;        title ('Histogram magnitude');
+        xlabel('Bin');  ylabel('Number in bin');
+
+        % phase of signal
+        subplot(4, 2, 5);
+        hist(angle(data), -3.14:0.1:3.14)
+        dmax = pi;
+        axis tight;     adata = axis;
+        axis([-dmax dmax adata(3) adata(4)]);
+        grid on;        title ('Histogram angle');
+        xlabel('Bin');  ylabel('Number in bin');  
+
+        % iq waveform
+        subplot(4, 2, 8);
+        plot(data); hold all; plot(data,'rd');
+        grid on;        title ('Raw I/Q Data');
+        xlabel('I');  ylabel('Q');  
         
+        
+        % real waveform
+        subplot(4, 2, 7);
+        plot(real(data(1:1000)));
+        grid on;        title ('Real Waveform');
+        xlabel('sample');  ylabel('Re');  
+          
     end
 else
     %=== Error while opening the data file ================================
