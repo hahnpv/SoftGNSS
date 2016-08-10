@@ -82,8 +82,11 @@ if (fid > 0)
     % Read 100ms of signal
     [data, count] = fread(fid, [1, dataAdaptCoeff*100*samplesPerCode], settings.dataType);
     
-    
     fclose(fid);
+    
+    if strcmp(settings.dataType, 'uchar')
+        data = data - 127;
+    end
     
     if (count < dataAdaptCoeff*100*samplesPerCode)
         % The file is to short
@@ -151,7 +154,7 @@ if (fid > 0)
     if (settings.fileType == 1)
         subplot(2, 2, 4);
         hist(data, -128:128)
-
+        
         dmax = max(abs(data)) + 1;
         axis tight;     adata = axis;
         axis([-dmax dmax adata(3) adata(4)]);
@@ -173,7 +176,7 @@ if (fid > 0)
         axis([-dmax dmax adata(3) adata(4)]);
         grid on;        title ('Histogram (Q)');
         xlabel('Bin');  ylabel('Number in bin');
-      
+        
         % magnitude of signal
         subplot(4, 2, 6);
         hist(abs(data), 0:1:ceil(max(abs(data))))
@@ -182,7 +185,7 @@ if (fid > 0)
         axis([0 dmax adata(3) adata(4)]);
         grid on;        title ('Histogram magnitude');
         xlabel('Bin');  ylabel('Number in bin');
-
+        
         % phase of signal
         subplot(4, 2, 5);
         hist(angle(data), -3.14:0.1:3.14)
@@ -190,21 +193,21 @@ if (fid > 0)
         axis tight;     adata = axis;
         axis([-dmax dmax adata(3) adata(4)]);
         grid on;        title ('Histogram angle');
-        xlabel('Bin');  ylabel('Number in bin');  
-
+        xlabel('Bin');  ylabel('Number in bin');
+        
         % iq waveform
         subplot(4, 2, 8);
         plot(data); hold all; plot(data,'rd');
         grid on;        title ('Raw I/Q Data');
-        xlabel('I');  ylabel('Q');  
+        xlabel('I');  ylabel('Q');
         
         
         % real waveform
         subplot(4, 2, 7);
         plot(real(data(1:1000)));
         grid on;        title ('Real Waveform');
-        xlabel('sample');  ylabel('Re');  
-          
+        xlabel('sample');  ylabel('Re');
+        
     end
 else
     %=== Error while opening the data file ================================

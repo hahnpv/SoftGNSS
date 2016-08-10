@@ -61,6 +61,7 @@ settings.skipNumberOfBytes     = 4e5;%4e6; % 2*4*10*1e6 worked for 1 sat
 % too?
 % Now seems to work with no change... 37000, basic dll/pll, no skip
 settings.fileName = ...
+gps_gnuradio_4m
     'C:\Users\phahn\Data\CTTC\2013_04_04_GNSS_SIGNAL_at_CTTC_SPAIN.dat';
 settings.dataType           = 'int16'; 
 settings.dataSize           = 2;           % bytes
@@ -81,21 +82,47 @@ settings.IF                 = 110.;      %[Hz]
 settings.samplingFreq       = 2048000;     %[Hz]
 %}
 
+
 % 120s sample worked!
 settings.fileName = ...
-     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % WORKS at location 4e5
+     'C:\Users\phahn\Data\SDRGPS\Feb6.u8'; 
+%     'C:\Users\phahn\Data\RTLSDR\test_centerpoint.u8'; 
+%     'C:\Users\phahn\Data\SDRGPS\Feb6.s8'; 
+%    'C:\Users\phahn\Data\RTLSDR\07152016\agc.bin';
+%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % WORKS at location 4e5
+%     'C:\Users\phahn\Data\RTLSDR\120s_sample.bin';     % WORKS, IF=0, freq=2048000
+%     'C:\Users\phahn\Data\park_fastgps';
+%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
+settings.dataType           = 'uchar'; % they used schar instead of int8
+settings.fileType           = 2;
+settings.dataSize           = 1;    % bytes
+settings.IF                 = 2210.53;        %[Hz]
+settings.samplingFreq       = 2048000;     %[Hz]
+settings.skipNumberOfBytes  = 6e6;%feb6.bin
+settings.msToProcess        = 50000;        %[ms]
+settings.numberOfChannels   = 5;
+
+
+%{
+% 120s sample worked!
+settings.fileName = ...
+     'C:\Users\phahn\Data\SDRGPS\Feb6.s8';     % WORKS at location 4e5
+%    'C:\Users\phahn\Data\RTLSDR\07152016\agc.bin';
+%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % WORKS at location 4e5
 %     'C:\Users\phahn\Data\RTLSDR\120s_sample.bin';     % WORKS, IF=0, freq=2048000
 %     'C:\Users\phahn\Data\park_fastgps';
 %     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
 settings.dataType           = 'schar'; % they used schar instead of int8
 settings.fileType           = 2;
 settings.dataSize           = 1;    % bytes
-settings.IF                 = 110.;        %[Hz]
+settings.IF                 = 0;        %[Hz]
+%settings.IF                 = 2118.;
 settings.samplingFreq       = 2048000;     %[Hz]
 settings.skipNumberOfBytes  = 4e5;%feb6.bin
-settings.msToProcess        = 100000;        %[ms]
-settings.numberOfChannels   = 6;
-
+settings.skipNumberOfSamples  = (4e5)/2;%feb6.bin
+settings.msToProcess        = 210000;        %[ms]
+settings.numberOfChannels   = 5;
+%}
 
 %{
 settings.fileName           = ...
@@ -124,9 +151,9 @@ settings.skipAcquisition    = 0;
 settings.acqSatelliteList   = 1:32;         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
 settings.acqSearchBand      = 20;           %[kHz] total bandwidth not one side!
-settings.acqSearchBin       = 125;          %[Hz]  Bin size
+settings.acqSearchBin       = 250;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 2.0;
+settings.acqThreshold       = 2.;
 
 %% Tracking loops settings ================================================
 % Code tracking loop parameters

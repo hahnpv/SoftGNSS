@@ -164,8 +164,8 @@ for currMeasNr = 1:fix((settings.msToProcess - max(subFrameStart)) / ...
                                         eph, settings);
 
 %pvh log satPositions, clock correction to see if it is jumpy
-navSolutions.channel.satPositions(currMeasNr,:,:) = satPositions;   % smooth
-navSolutions.channel.satClkCorr(currMeasNr,:)     = satClkCorr;     % smooth
+%navSolutions.channel.satPositions(currMeasNr,:,:) = satPositions;   % smooth
+%navSolutions.channel.satClkCorr(currMeasNr,:)     = satClkCorr;     % smooth
                                     
 %% Find receiver position =================================================
 

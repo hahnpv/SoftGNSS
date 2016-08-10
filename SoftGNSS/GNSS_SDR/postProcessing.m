@@ -89,12 +89,16 @@ if (fid > 0)
         
         data = fread(fid, dataAdaptCoeff*11*samplesPerCode, settings.dataType)';
                 
-        if (dataAdaptCoeff==2)    
+        if strcmp(settings.dataType, 'uchar')
+            data = data - 127;
+        end
+        
+        if (dataAdaptCoeff==2)
             data1=data(1:2:end);    
             data2=data(2:2:end);    
             data=data1 + 1i .* data2;    
         end
-
+        
         %--- Do the acquisition -------------------------------------------
         disp ('   Acquiring satellites...');
         acqResults = acquisition(data, settings);

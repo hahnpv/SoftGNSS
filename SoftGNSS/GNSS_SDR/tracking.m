@@ -196,6 +196,10 @@ for channelNr = 1:settings.numberOfChannels
                 return
             end
 
+            if strcmp(settings.dataType, 'uchar')
+                rawSignal = rawSignal - 127;
+            end
+            
             if (dataAdaptCoeff==2)
                 rawSignal1=rawSignal(1:2:end);
                 rawSignal2=rawSignal(2:2:end);
