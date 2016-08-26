@@ -57,7 +57,7 @@ settings.skipNumberOfBytes     = 6e6;
 
 % 120s sample worked!
 settings.fileName = ...
-     'C:\Users\phahn\Data\SDRGPS\Feb6.u8'; 
+     'C:\path\to\Feb6.u8'; 
 settings.dataType           = 'uchar';       % uchar, schar = 1 byte
 settings.fileType           = 2;             % 2 = IQ, 1 = Real
 settings.dataSize           = 1;             % bytes
