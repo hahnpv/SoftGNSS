@@ -149,8 +149,8 @@ if (fid > 0)
     if settings.plotTracking
         plotTracking(strfind([trackResults.status],'T'), trackResults, settings);
     end
-
-    plotNavigation(navSolutions, settings);
+    
+        plotNavigation(navSolutions, settings);
 
     disp('Post processing of the signal is over.');
 
