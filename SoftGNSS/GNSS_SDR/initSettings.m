@@ -49,91 +49,23 @@ settings.numberOfChannels   = 8;
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 4e5;%4e6; % 2*4*10*1e6 worked for 1 sat
+settings.skipNumberOfBytes     = 6e6;
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
 % the post-processing mode
-%{
-%CTTC works, kind of, lat/lon within 1 degree but alt is 5M feet.
-% skipNumberOfBytes 1e6, msToProcess = 99000, dll=4/6, pll=50/75
-% all neg doppler which is feasible but unlikely? -> neg IF gets more sats
-% too?
-% Now seems to work with no change... 37000, basic dll/pll, no skip
-settings.fileName = ...
-gps_gnuradio_4m
-    'C:\Users\phahn\Data\CTTC\2013_04_04_GNSS_SIGNAL_at_CTTC_SPAIN.dat';
-settings.dataType           = 'int16'; 
-settings.dataSize           = 2;           % bytes
-settings.fileType           = 2;
-settings.IF                 = 0.;          %[Hz] 
-settings.samplingFreq       = 4000000;     %[Hz]
-settings.skipNumberOfBytes     = 4e6+4e5;%4e6; % 2*4*10*1e6 worked for 1 sat
-%}
-%{
-% GNURadio Complex = pair of singles
-% at 4e6 we pick up the right satellites but cant get preambles except 31.
-settings.fileName = ...
-    'C:\Users\phahn\Data\SDRGPS\Feb06.bin';
-settings.dataType           = 'single'; 
-settings.dataSize           = 4;    % bytes
-settings.fileType           = 2;
-settings.IF                 = 110.;      %[Hz]
-settings.samplingFreq       = 2048000;     %[Hz]
-%}
-
 
 % 120s sample worked!
 settings.fileName = ...
      'C:\Users\phahn\Data\SDRGPS\Feb6.u8'; 
-%     'C:\Users\phahn\Data\RTLSDR\test_centerpoint.u8'; 
-%     'C:\Users\phahn\Data\SDRGPS\Feb6.s8'; 
-%    'C:\Users\phahn\Data\RTLSDR\07152016\agc.bin';
-%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % WORKS at location 4e5
-%     'C:\Users\phahn\Data\RTLSDR\120s_sample.bin';     % WORKS, IF=0, freq=2048000
-%     'C:\Users\phahn\Data\park_fastgps';
-%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
-settings.dataType           = 'uchar'; % they used schar instead of int8
-settings.fileType           = 2;
-settings.dataSize           = 1;    % bytes
-settings.IF                 = 2210.53;        %[Hz]
-settings.samplingFreq       = 2048000;     %[Hz]
-settings.skipNumberOfBytes  = 6e6;%feb6.bin
-settings.msToProcess        = 50000;        %[ms]
+settings.dataType           = 'uchar';       % uchar, schar = 1 byte
+settings.fileType           = 2;             % 2 = IQ, 1 = Real
+settings.dataSize           = 1;             % bytes
+settings.IF                 = 2210.53;       % [Hz]
+settings.samplingFreq       = 2048000;       % [Hz]
+settings.msToProcess        = 210000;        % [ms]
 settings.numberOfChannels   = 5;
 
-
-%{
-% 120s sample worked!
-settings.fileName = ...
-     'C:\Users\phahn\Data\SDRGPS\Feb6.s8';     % WORKS at location 4e5
-%    'C:\Users\phahn\Data\RTLSDR\07152016\agc.bin';
-%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';     % WORKS at location 4e5
-%     'C:\Users\phahn\Data\RTLSDR\120s_sample.bin';     % WORKS, IF=0, freq=2048000
-%     'C:\Users\phahn\Data\park_fastgps';
-%     'C:\Users\phahn\Data\SDRGPS\Feb6.bin';
-settings.dataType           = 'schar'; % they used schar instead of int8
-settings.fileType           = 2;
-settings.dataSize           = 1;    % bytes
-settings.IF                 = 0;        %[Hz]
-%settings.IF                 = 2118.;
-settings.samplingFreq       = 2048000;     %[Hz]
-settings.skipNumberOfBytes  = 4e5;%feb6.bin
-settings.skipNumberOfSamples  = (4e5)/2;%feb6.bin
-settings.msToProcess        = 210000;        %[ms]
-settings.numberOfChannels   = 5;
-%}
-
-%{
-settings.fileName           = ...
-   'C:\Users\phahn\Data\GNSS_signal_records\GPS_and_GIOVE_A-NN-fs16_3676-if4_1304.bin';
-% NOTE: using 37000 [ms] works but 99000 [ms] did not (?)
-settings.dataType           = 'schar';
-settings.fileType           = 1;
-settings.dataSize           = 1;    % bytes
-settings.IF                 = 4.1304e6;      %[Hz]
-settings.samplingFreq       = 16.3676e6;     %[Hz]
-%}
 % File Types
 %1 - 8 bit real samples S0,S1,S2,...
 %2 - 8 bit I/Q samples I0,Q0,I1,Q1,I2,Q2,...                      
