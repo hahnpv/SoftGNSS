@@ -287,7 +287,7 @@ for channelNr = 1:settings.numberOfChannels
 
 %% Record various measures to show in postprocessing ----------------------
             % Record sample number (based on 8bit samples)
-           trackResults(channelNr).absoluteSample(loopCnt) =(ftell(fid))/dataAdaptCoeff- remCodePhase/codePhaseStep;
+           trackResults(channelNr).absoluteSample(loopCnt) =(ftell(fid))/(settings.dataSize*dataAdaptCoeff)- remCodePhase/codePhaseStep;
 
             trackResults(channelNr).dllDiscr(loopCnt)       = codeError;
             trackResults(channelNr).dllDiscrFilt(loopCnt)   = codeNco;

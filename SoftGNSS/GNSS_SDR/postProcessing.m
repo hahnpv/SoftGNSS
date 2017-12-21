@@ -72,8 +72,10 @@ if (fid > 0)
     % Move the starting point of processing. Can be used to start the
     % signal processing at any point in the data record (e.g. good for long
     % records or for signal processing in blocks).
-    fseek(fid, dataAdaptCoeff*settings.skipNumberOfBytes, 'bof'); 
-
+%    fseek(fid, dataAdaptCoeff*settings.skipNumberOfBytes, 'bof'); 
+          fseek(fid, ...
+            settings.dataSize*dataAdaptCoeff*settings.skipNumberOfBytes, ...
+            'bof');
 %% Acquisition ============================================================
 
     % Do acquisition if it is not disabled in settings or if the variable

@@ -67,8 +67,11 @@ if (fid > 0)
     % Move the starting point of processing. Can be used to start the
     % signal processing at any point in the data record (e.g. for long
     % records).
-    fseek(fid, dataAdaptCoeff*settings.skipNumberOfBytes, 'bof');
-    
+%    fseek(fid, dataAdaptCoeff*settings.skipNumberOfBytes, 'bof');
+          fseek(fid, ...
+            settings.dataSize*dataAdaptCoeff*(settings.skipNumberOfBytes), ...
+            'bof');
+        
     % Find number of samples per spreading code
     samplesPerCode = round(settings.samplingFreq / ...
         (settings.codeFreqBasis / settings.codeLength));

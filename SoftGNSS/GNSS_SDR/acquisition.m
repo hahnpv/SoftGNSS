@@ -228,6 +228,10 @@ for PRN = settings.acqSatelliteList
         
         acqResults.codePhase(PRN) = codePhase;
     
+        if(abs(acqResults.carrFreq(PRN))>=10000)
+            warning(['carrFreq for ' num2str(PRN) ' exceeds 10kHz. Skipping for now. May be bug in code?'])
+            acqResults.peakMetric(PRN)   = -1.;
+        end
     else
         %--- No signal with this PRN --------------------------------------
         fprintf('. ');

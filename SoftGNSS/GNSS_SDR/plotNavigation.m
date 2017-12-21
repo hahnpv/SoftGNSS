@@ -47,9 +47,9 @@ if (~isempty(navSolutions))
 
         %=== Compute mean values ========================================== 
         % Remove NaN-s or the output of the function MEAN will be NaN.
-        refCoord.E = mean(navSolutions.E(~isnan(navSolutions.E)));
-        refCoord.N = mean(navSolutions.N(~isnan(navSolutions.N)));
-        refCoord.U = mean(navSolutions.U(~isnan(navSolutions.U)));
+        refCoord.E = navSolutions.E(1); % mean(navSolutions.E(~isnan(navSolutions.E)));
+        refCoord.N = navSolutions.N(1); % mean(navSolutions.N(~isnan(navSolutions.N)));
+        refCoord.U = navSolutions.U(1); % mean(navSolutions.U(~isnan(navSolutions.U)));
 
         %Also convert geodetic coordinates to deg:min:sec vector format
         meanLongitude = dms2mat(deg2dms(...

@@ -40,7 +40,7 @@ function settings = initSettings()
 %% Processing settings ====================================================
 % Number of milliseconds to be processed used 36000 + any transients (see
 % below - in Nav parameters) to ensure nav subframes are provided
-settings.msToProcess        = 37000;        %[ms]
+settings.msToProcess        = 590000;        %[ms]
 
 % Number of channels to be used for signal processing
 settings.numberOfChannels   = 8;
@@ -49,7 +49,9 @@ settings.numberOfChannels   = 8;
 % processing at any point in the data record (e.g. for long records). fseek
 % function is used to move the file read point, therefore advance is byte
 % based only. 
-settings.skipNumberOfBytes     = 6e6;
+settings.skipNumberOfBytes     = 250*2.048e6; % 200, 7 sats, works!!!!!!!!!!!!!!!!! 300sec
+%settings.skipNumberOfBytes     = 200*2.048e6; % 200, 7 sats, works!!!!!!!!!!!!!!!!! 300sec
+% 200, 10 sats (3 obvs bad) nav fix but up drifts
 
 %% Raw signal file name and other parameter ===============================
 % This is a "default" name of the data file (signal record) to be used in
@@ -57,14 +59,15 @@ settings.skipNumberOfBytes     = 6e6;
 
 % 120s sample worked!
 settings.fileName = ...
-     'C:\path\to\Feb6.u8'; 
-settings.dataType           = 'uchar';       % uchar, schar = 1 byte
+     '../../../samples1.complex'; 
+settings.dataType           = 'float';       % uchar, schar = 1 byte
 settings.fileType           = 2;             % 2 = IQ, 1 = Real
-settings.dataSize           = 1;             % bytes
-settings.IF                 = 2210.53;       % [Hz]
+settings.dataSize           = 4;             % bytes
+settings.IF                 = 0.0;           % [Hz]
 settings.samplingFreq       = 2048000;       % [Hz]
-settings.msToProcess        = 210000;        % [ms]
-settings.numberOfChannels   = 5;
+settings.msToProcess        = 300000;        % [ms]
+settings.numberOfChannels   = 7;
+% looking for 1,3,9,11,14,16,22,23,26,32, 235
 
 % File Types
 %1 - 8 bit real samples S0,S1,S2,...
@@ -81,11 +84,12 @@ settings.skipAcquisition    = 0;
 % List of satellites to look for. Some satellites can be excluded to speed
 % up acquisition
 settings.acqSatelliteList   = 1:32;         %[PRN numbers]
+%settings.acqSatelliteList   = [3,4,14,22,23,26,31];         %[PRN numbers]
 % Band around IF to search for satellite signal. Depends on max Doppler
 settings.acqSearchBand      = 20;           %[kHz] total bandwidth not one side!
 settings.acqSearchBin       = 250;          %[Hz]  Bin size
 % Threshold for the signal presence decision rule
-settings.acqThreshold       = 2.;
+settings.acqThreshold       = 1.;
 
 %% Tracking loops settings ================================================
 % Code tracking loop parameters
